@@ -1,10 +1,10 @@
-import { Button } from "ui";
-
+"use client";
+import { Header } from "ui";
 export default function Web() {
   return (
-    <div>
-      <h1 className="text-center text-red-700">Web</h1>
-      <Button />
+    <div className="min-h-screen dark:bg-neutral-800">
+      <Header />
+      <hr className="h-px border-0 bg-gray-200 dark:bg-neutral-600" />
     </div>
   );
 }
