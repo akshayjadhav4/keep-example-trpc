@@ -1,5 +1,5 @@
 "use client";
-import { Header, Sidebar } from "ui";
+import { Form, Header, Sidebar } from "ui";
 export default function Web() {
   return (
     <div className="min-h-screen dark:bg-neutral-800">
@@ -9,7 +9,9 @@ export default function Web() {
         <div className="w-28">
           <Sidebar />
         </div>
-        <div className="flex-1"></div>
+        <div className="flex-1">
+          <Form />
+        </div>
       </div>
     </div>
   );
