@@ -1,4 +1,3 @@
-"use client";
 import { Form, Header, Sidebar } from "ui";
 export default function Web() {
   return (
