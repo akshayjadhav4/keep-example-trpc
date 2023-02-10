@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-import { Bulb } from "./Icons/Bulb";
-import { Menu } from "./Icons/Menu";
-import { Refresh } from "./Icons/Refresh";
-import { Search } from "./Icons/Search";
-import { Settings } from "./Icons/Settings";
+import { Bulb } from "../Icons/Bulb";
+import { Menu } from "../Icons/Menu";
+import { Refresh } from "../Icons/Refresh";
+import { Search } from "../Icons/Search";
+import { Settings } from "../Icons/Settings";
 
 export const Header = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);

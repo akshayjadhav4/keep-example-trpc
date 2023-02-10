@@ -1,8 +1,8 @@
 import React from "react";
-import { Archive } from "./Icons/Archive";
-import { Bulb } from "./Icons/Bulb";
-import { Tag } from "./Icons/Tag";
-import { Trash } from "./Icons/Trash";
+import { Archive } from "../Icons/Archive";
+import { Bulb } from "../Icons/Bulb";
+import { Tag } from "../Icons/Tag";
+import { Trash } from "../Icons/Trash";
 
 type Props = {};
 

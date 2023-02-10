@@ -1,8 +1,8 @@
 import React, { KeyboardEvent, useEffect, useRef, useState } from "react";
-import { CheckIcon } from "./Icons/CheckIcon";
-import { Close } from "./Icons/Close";
-import { Plus } from "./Icons/Plus";
-import { Tag } from "./Icons/Tag";
+import { CheckIcon } from "../Icons/CheckIcon";
+import { Close } from "../Icons/Close";
+import { Plus } from "../Icons/Plus";
+import { Tag } from "../Icons/Tag";
 
 type Props = {};
 

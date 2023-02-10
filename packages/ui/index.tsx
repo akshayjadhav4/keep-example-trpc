@@ -1,5 +1,4 @@
-import * as React from "react";
-export * from "./Button";
-export * from "./Header";
-export * from "./Sidebar";
-export * from "./Form";
+export * from "./components/Button";
+export * from "./components/Header";
+export * from "./components/Sidebar";
+export * from "./components/Form";
