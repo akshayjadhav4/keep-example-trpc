@@ -15,3 +15,8 @@ model Keep {
   title String
   note  String
 }
+
+model Tag {
+  id  Int    @id @default(autoincrement())
+  tag String
+}
