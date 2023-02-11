@@ -3,3 +3,4 @@ export * from "./components/Header";
 export * from "./components/Sidebar";
 export * from "./components/Form";
 export * from "./components/CreateTag";
+export * from "./components/Loader";
