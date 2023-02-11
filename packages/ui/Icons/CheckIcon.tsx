@@ -13,8 +13,9 @@ export const CheckIcon = ({ showCheckboxes = false }: CheckIconProps) => {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className={classNames("h-6 w-6 stroke-red-500", {
+      className={classNames("h-6 w-6", {
         "stroke-neutral-800 dark:stroke-white": !showCheckboxes,
+        "stroke-red-500": showCheckboxes,
       })}
     >
       <path

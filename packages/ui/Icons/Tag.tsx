@@ -1,15 +1,21 @@
 import classNames from "classnames";
 
-export const Tag = ({ showTags = false }) => {
+export const Tag = ({ showTags = false, height = "h-6", width = "h-6" }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
       strokeWidth={1.5}
-      className={classNames("h-6 w-6 stroke-orange-400", {
-        "stroke-neutral-800 dark:stroke-white": !showTags,
-      })}
+      className={classNames(
+        `${height} ${width}`,
+        {
+          "stroke-neutral-800 dark:stroke-white": !showTags,
+        },
+        {
+          "stroke-orange-400": showTags,
+        }
+      )}
     >
       <path
         strokeLinecap="round"
