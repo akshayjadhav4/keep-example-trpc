@@ -2,7 +2,7 @@ import Head from "next/head";
 import { Form } from "ui";
 import { trpc } from "../utils/trpc";
 export default function Web() {
-  const hello = trpc.hello.useQuery({ text: "Keep Project" });
+  const hello = trpc.hello.sayHello.useQuery({ text: "Keep Project" });
 
   return (
     <>

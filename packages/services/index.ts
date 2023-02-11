@@ -1,26 +1,7 @@
 import cors from "cors";
 import express, { Response } from "express";
-import { initTRPC } from "@trpc/server";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import { z } from "zod";
-
-// trpc
-const t = initTRPC.create();
-const procedure = t.procedure;
-const router = t.router;
-const appRouter = router({
-  hello: procedure
-    .input(
-      z.object({
-        text: z.string(),
-      })
-    )
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
-    }),
-});
+import { appRouter } from "./routers";
 
 // express
 const app = express();
