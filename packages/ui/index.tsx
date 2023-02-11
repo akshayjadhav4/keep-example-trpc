@@ -4,3 +4,5 @@ export * from "./components/Sidebar";
 export * from "./components/Form";
 export * from "./components/CreateTag";
 export * from "./components/Loader";
+export * from "./components/NoTags";
+export * from "./Icons/Close";

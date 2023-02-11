@@ -34,4 +34,23 @@ export const tagsRouter = router({
         };
       }
     }),
+  deleteTag: procedure
+    .input(
+      z.object({
+        id: z.number(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      try {
+        await ctx.prisma.tag.delete({
+          where: {
+            id: input?.id,
+          },
+        });
+      } catch (error) {
+        return {
+          error: "Something went wrong. Not able to delete Tag.",
+        };
+      }
+    }),
 });
