@@ -1,14 +1,13 @@
 import { z } from "zod";
-import { prisma } from "../db";
 import { t } from "../trpc";
 
 const procedure = t.procedure;
 const router = t.router;
 
 export const tagsRouter = router({
-  getAllTags: procedure.query(async () => {
+  getAllTags: procedure.query(async ({ ctx }) => {
     try {
-      const tags = await prisma.tag.findMany();
+      const tags = await ctx.prisma.tag.findMany();
       return { tags };
     } catch (error) {
       return {
@@ -22,9 +21,9 @@ export const tagsRouter = router({
         tag: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
-        await prisma.tag.create({
+        await ctx.prisma.tag.create({
           data: {
             tag: input.tag,
           },
