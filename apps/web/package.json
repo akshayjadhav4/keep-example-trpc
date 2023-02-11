@@ -9,22 +9,29 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tanstack/react-query": "^4.24.4",
+    "@trpc/client": "^10.11.0",
+    "@trpc/next": "^10.11.0",
+    "@trpc/react-query": "^10.11.0",
+    "database": "*",
+    "install": "^0.13.0",
     "next": "^13.1.1",
+    "npm": "^9.4.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "ui": "*",
-    "database": "*"
+    "zod": "^3.20.6"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
+    "@types/node": "^17.0.12",
+    "@types/react": "^18.0.22",
+    "@types/react-dom": "^18.0.7",
     "eslint": "7.32.0",
     "eslint-config-custom": "*",
     "postcss": "^8.4.21",
     "tailwindcss": "^3.2.4",
     "tsconfig": "*",
-    "@types/node": "^17.0.12",
-    "@types/react": "^18.0.22",
-    "@types/react-dom": "^18.0.7",
     "typescript": "^4.5.3"
   }
 }

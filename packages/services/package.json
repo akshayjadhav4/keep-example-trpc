@@ -1,16 +1,18 @@
 {
   "name": "services",
   "version": "0.0.0",
-  "main": "index.ts",
-  "types": "index.tsx",
+  "main": "./index.ts",
+  "types": "./index.ts",
   "scripts": {
     "dev": "nodemon --exec ts-node index.ts",
     "build": "tsc -p ."
   },
   "dependencies": {
+    "@trpc/server": "^10.11.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "zod": "^3.20.6"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",
