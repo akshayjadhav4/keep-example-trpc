@@ -4,7 +4,9 @@ import { Close } from "../Icons/Close";
 import { Plus } from "../Icons/Plus";
 import { Tag } from "../Icons/Tag";
 
-type Props = {};
+type Props = {
+  allTags: Tags[];
+};
 
 interface Todo {
   id: string;
@@ -13,7 +15,7 @@ interface Todo {
 }
 
 interface Tags {
-  id: string;
+  id: number;
   tag: string;
 }
 
@@ -28,7 +30,7 @@ const testTags = [
   },
 ];
 
-export const Form = (props: Props) => {
+export const Form = ({ allTags }: Props) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const formContainerRef = useRef<HTMLDivElement>(null);
 
@@ -38,7 +40,7 @@ export const Form = (props: Props) => {
   const [showCheckboxes, setShowCheckboxes] = useState<boolean>(false);
   const [todos, setTodos] = useState<Todo[]>([]);
   const [showTags, setShowTags] = useState<boolean>(false);
-  const [tags, setTags] = useState<Tags[]>([]);
+  const [tags, setTags] = useState<Tags[]>(allTags);
   const [selectedTags, setSelectedTags] = useState<Tags[]>([]);
 
   const [todoValue, setTodoValue] = useState<string>("");
@@ -226,7 +228,7 @@ export const Form = (props: Props) => {
               {selectedTags?.map((selectedTag) => (
                 <div
                   key={selectedTag.id}
-                  className="mr-1 grid h-6 place-content-center rounded-full border border-neutral-300 px-2 py-4 dark:border-neutral-600"
+                  className="mr-1 grid h-6 place-content-center rounded-full border border-neutral-300 px-8 py-4 dark:border-neutral-600"
                 >
                   <p className="text-xs dark:text-white">{selectedTag.tag}</p>
                 </div>

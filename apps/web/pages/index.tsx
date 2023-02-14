@@ -1,18 +1,24 @@
 import Head from "next/head";
 import { Form } from "ui";
+import Loader from "ui/components/Loader";
 import { trpc } from "../utils/trpc";
 export default function Web() {
-  const hello = trpc.hello.sayHello.useQuery({ text: "Keep Project" });
+  const { data: tagsData, isLoading } = trpc.tags.getAllTags.useQuery();
+
+  const tags = tagsData?.tags || [];
 
   return (
     <>
       <Head>
         <title>Keep</title>
       </Head>
-      <div>
-        <Form />
-        {!hello.error && hello.data ? <h1>{hello.data.greeting}</h1> : null}
-      </div>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div>
+          <Form allTags={tags} />
+        </div>
+      )}
     </>
   );
 }
