@@ -11,12 +11,23 @@ datasource db {
 }
 
 model Keep {
-  id    Int    @id @default(autoincrement())
+  id    Int     @id @default(autoincrement())
   title String
-  note  String
+  note  String?
+  tags  Tag[]   @relation("TagToKeep")
+  todos Todo[]
 }
 
 model Tag {
-  id  Int    @id @default(autoincrement())
-  tag String
+  id    Int    @id @default(autoincrement())
+  tag   String
+  keeps Keep[] @relation("TagToKeep")
+}
+
+model Todo {
+  id          String  @id
+  isCompleted Boolean
+  todo        String
+  keepId      Int
+  keep        Keep    @relation(fields: [keepId], references: [id])
 }
