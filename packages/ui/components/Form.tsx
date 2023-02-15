@@ -3,11 +3,14 @@ import { uuid } from "uuidv4";
 import { CheckIcon } from "../Icons/CheckIcon";
 import { Close } from "../Icons/Close";
 import { Plus } from "../Icons/Plus";
+import { Refresh } from "../Icons/Refresh";
 import { Tag } from "../Icons/Tag";
 
 type Props = {
   allTags: Tags[];
   createKeep: (keep: Keep) => void;
+  isProcessing: boolean;
+  reset: boolean;
 };
 interface Keep {
   title: string;
@@ -30,7 +33,7 @@ interface Tags {
   tag: string;
 }
 
-export const Form = ({ allTags, createKeep }: Props) => {
+export const Form = ({ allTags, createKeep, isProcessing, reset }: Props) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const formContainerRef = useRef<HTMLDivElement>(null);
 
@@ -58,6 +61,17 @@ export const Form = ({ allTags, createKeep }: Props) => {
     }
   }
 
+  function resetForm() {
+    setIsFormExpanded(false);
+    setShowCheckboxes(false);
+    setTitle("");
+    setNote("");
+    setTodoValue("");
+    setTodos([]);
+    setShowTags(false);
+    setSelectedTags([]);
+  }
+
   useEffect(() => {
     // dynamic height textarea
     if (textAreaRef && textAreaRef.current) {
@@ -76,14 +90,7 @@ export const Form = ({ allTags, createKeep }: Props) => {
         !formContainerRef.current.contains(event.target as Node) &&
         isFormExpanded
       ) {
-        setIsFormExpanded(false);
-        setShowCheckboxes(false);
-        setTitle("");
-        setNote("");
-        setTodoValue("");
-        setTodos([]);
-        setShowTags(false);
-        setSelectedTags([]);
+        resetForm();
       }
     }
     // attach the event listener
@@ -93,6 +100,12 @@ export const Form = ({ allTags, createKeep }: Props) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [formContainerRef, isFormExpanded]);
+
+  useEffect(() => {
+    if (reset) {
+      resetForm();
+    }
+  }, [reset]);
 
   return (
     <div
@@ -297,21 +310,26 @@ export const Form = ({ allTags, createKeep }: Props) => {
               </button>
             </div>
             <button
-              className="mr-4 rounded-md px-6 py-2 hover:bg-slate-100 hover:dark:bg-neutral-700"
+              className="mr-4 rounded-md px-6 py-2 hover:bg-slate-100 disabled:bg-neutral-500 hover:dark:bg-neutral-700"
+              disabled={isProcessing}
               onClick={() => {
-                createKeep({
-                  title,
-                  note,
-                  tags: selectedTags.map((tag) => {
-                    return {
-                      id: tag.id,
-                    };
-                  }),
-                  todos: todos,
-                });
+                if (title && note) {
+                  createKeep({
+                    title,
+                    note,
+                    tags: selectedTags.map((tag) => {
+                      return {
+                        id: tag.id,
+                      };
+                    }),
+                    todos: todos,
+                  });
+                }
               }}
             >
-              <span className="text-sm font-medium dark:text-white">Save</span>
+              <span className="text-sm font-medium dark:text-white">
+                {isProcessing ? <Refresh isRefreshing /> : "Save"}
+              </span>
             </button>
           </div>
           {/* action buttons footer end */}
