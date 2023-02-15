@@ -6,3 +6,4 @@ export * from "./components/CreateTag";
 export * from "./components/Loader";
 export * from "./components/NoTags";
 export * from "./Icons/Close";
+export * from "./components/KeepCard";

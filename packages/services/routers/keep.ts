@@ -52,4 +52,52 @@ export const keepRouter = router({
         };
       }
     }),
+
+  getAllKeeps: procedure.query(async ({ ctx }) => {
+    try {
+      const keeps = await ctx.prisma.keep.findMany({
+        include: {
+          tags: true,
+          todos: true,
+        },
+        orderBy: {
+          id: "desc",
+        },
+      });
+      return { keeps };
+    } catch (error) {
+      return {
+        error: "Something went wrong. Not able to fetch Keeps.",
+      };
+    }
+  }),
+  getKeep: procedure
+    .input(
+      z.object({
+        id: z.number(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      try {
+        const keep = await ctx.prisma.keep.findUnique({
+          where: {
+            id: input.id,
+          },
+          include: {
+            tags: true,
+            todos: true,
+          },
+        });
+        if (!!keep) {
+          return { keep };
+        }
+        return {
+          message: "No Keep found with given id.",
+        };
+      } catch (error) {
+        return {
+          error: "Something went wrong. Not able to fetch Keep.",
+        };
+      }
+    }),
 });
