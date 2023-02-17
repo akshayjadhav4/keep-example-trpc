@@ -100,4 +100,24 @@ export const keepRouter = router({
         };
       }
     }),
+  deleteKeep: procedure
+    .input(
+      z.object({
+        id: z.number(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      try {
+        await ctx.prisma.todo.deleteMany({
+          where: { keepId: input.id },
+        });
+        await ctx.prisma.keep.delete({
+          where: { id: input.id },
+        });
+      } catch (error) {
+        return {
+          error: "Something went wrong. Not able to delete Keep.",
+        };
+      }
+    }),
 });

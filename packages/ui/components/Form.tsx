@@ -102,9 +102,7 @@ export const Form = ({ allTags, createKeep, isProcessing, reset }: Props) => {
   }, [formContainerRef, isFormExpanded]);
 
   useEffect(() => {
-    if (reset) {
-      resetForm();
-    }
+    resetForm();
   }, [reset]);
 
   return (

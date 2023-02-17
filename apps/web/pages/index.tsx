@@ -2,6 +2,7 @@ import Head from "next/head";
 import { useCallback, useState } from "react";
 import { Form, KeepCard } from "ui";
 import Loader from "ui/components/Loader";
+import { Refresh } from "ui/Icons/Refresh";
 import { trpc } from "../utils/trpc";
 export default function Web() {
   const [reset, setReset] = useState(false);
@@ -13,10 +14,13 @@ export default function Web() {
   } = trpc.keep.getAllKeeps.useQuery();
 
   const createKeepMutation = trpc.keep.createKeep.useMutation({
-    onSuccess: (reset) => {
+    onSuccess: () => {
       refetch();
-      setReset(!reset);
+      setReset((reset) => !reset);
     },
+  });
+  const deleteKeepMutation = trpc.keep.deleteKeep.useMutation({
+    onSuccess: () => refetch(),
   });
   const tags = tagsData?.tags || [];
   const createKeep = useCallback(
@@ -39,6 +43,14 @@ export default function Web() {
     },
     [createKeepMutation]
   );
+  const deleteKeep = useCallback(
+    (id: number) => {
+      deleteKeepMutation.mutate({
+        id: id,
+      });
+    },
+    [deleteKeepMutation]
+  );
 
   return (
     <>
@@ -60,10 +72,18 @@ export default function Web() {
               Something went wrong. Not able create Keep.
             </p>
           ) : null}
+          <div className="my-2 flex justify-center">
+            {deleteKeepMutation?.isLoading ? <Refresh isRefreshing /> : null}
+          </div>
           {keepsData?.keeps && keepsData?.keeps?.length > 0 ? (
             <div className="mb-4 columns-1 gap-6 md:columns-2 lg:columns-3 xl:columns-4">
               {keepsData?.keeps.map((keep) => (
-                <KeepCard keep={keep} />
+                <KeepCard
+                  key={keep.id}
+                  keep={keep}
+                  deleteKeep={deleteKeep}
+                  isDeleting={deleteKeepMutation?.isLoading}
+                />
               ))}
             </div>
           ) : null}

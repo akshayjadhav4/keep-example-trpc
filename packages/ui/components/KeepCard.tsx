@@ -1,4 +1,5 @@
 import React from "react";
+import { Trash } from "../Icons/Trash";
 
 export interface Keeps {
   keeps: Keep[];
@@ -24,11 +25,19 @@ export interface Todo {
   keepId: number;
 }
 
-export const KeepCard = ({ keep }: { keep: Keep }) => {
+export const KeepCard = ({
+  keep,
+  deleteKeep,
+  isDeleting,
+}: {
+  keep: Keep;
+  deleteKeep: (id: number) => void;
+  isDeleting: boolean;
+}) => {
   return (
     <div
       key={keep.id}
-      className="mb-5 break-inside-avoid rounded-lg border border-neutral-300 py-3 px-4 shadow-md dark:border-neutral-600"
+      className="group mb-5 cursor-pointer break-inside-avoid rounded-lg border border-neutral-300 py-3 px-4 shadow-md dark:border-neutral-600"
     >
       <>
         <h3 className="text-base font-medium dark:text-white">{keep.title}</h3>
@@ -67,6 +76,17 @@ export const KeepCard = ({ keep }: { keep: Keep }) => {
             ))}
           </div>
         ) : null}
+        <div className="flex justify-end">
+          <button
+            onClick={() => deleteKeep(keep?.id)}
+            disabled={isDeleting}
+            className="grid h-7 w-7 place-items-center  hover:rounded-full hover:bg-slate-100 hover:dark:bg-neutral-700"
+          >
+            <span className="hidden group-hover:block">
+              <Trash height="h-4" width="w-4" />
+            </span>
+          </button>
+        </div>
       </>
     </div>
   );
