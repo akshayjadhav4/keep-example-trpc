@@ -1,11 +1,15 @@
 import Head from "next/head";
 import { useCallback, useState } from "react";
-import { Form, KeepCard } from "ui";
+import { Form, Keep, KeepCard, Modal } from "ui";
 import Loader from "ui/components/Loader";
 import { Refresh } from "ui/Icons/Refresh";
 import { trpc } from "../utils/trpc";
+
 export default function Web() {
   const [reset, setReset] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [editKeep, setEditKeep] = useState<Keep | null>(null);
+
   const { data: tagsData, isLoading } = trpc.tags.getAllTags.useQuery();
   const {
     data: keepsData,
@@ -17,6 +21,12 @@ export default function Web() {
     onSuccess: () => {
       refetch();
       setReset((reset) => !reset);
+    },
+  });
+  const updateKeepMutation = trpc.keep.updateKeep.useMutation({
+    onSuccess: () => {
+      refetch();
+      setIsOpen(false);
     },
   });
   const deleteKeepMutation = trpc.keep.deleteKeep.useMutation({
@@ -52,6 +62,28 @@ export default function Web() {
     [deleteKeepMutation]
   );
 
+  const updateKeep = useCallback(
+    (keep: {
+      id: number;
+      title: string;
+      note: string | null;
+      todos?: {
+        id: string;
+        todo: string;
+        isCompleted: boolean;
+      }[];
+      tags?: { id: number }[];
+    }) => {
+      updateKeepMutation.mutate({
+        id: keep.id,
+        title: keep.title,
+        note: keep.note || "",
+        tags: keep.tags,
+        todos: keep?.todos,
+      });
+    },
+    [updateKeepMutation]
+  );
   return (
     <>
       <Head>
@@ -78,17 +110,32 @@ export default function Web() {
           {keepsData?.keeps && keepsData?.keeps?.length > 0 ? (
             <div className="mb-4 columns-1 gap-6 md:columns-2 lg:columns-3 xl:columns-4">
               {keepsData?.keeps.map((keep) => (
-                <KeepCard
+                <div
                   key={keep.id}
-                  keep={keep}
-                  deleteKeep={deleteKeep}
-                  isDeleting={deleteKeepMutation?.isLoading}
-                />
+                  onClick={() => {
+                    setIsOpen(true);
+                    setEditKeep(keep);
+                  }}
+                >
+                  <KeepCard
+                    keep={keep}
+                    deleteKeep={deleteKeep}
+                    isDeleting={deleteKeepMutation?.isLoading}
+                  />
+                </div>
               ))}
             </div>
           ) : null}
         </div>
       )}
+      <Modal
+        isOpen={isOpen}
+        editKeep={editKeep}
+        setIsOpen={(isOpen) => setIsOpen(isOpen)}
+        allTags={tagsData?.tags}
+        isProcessing={updateKeepMutation?.isLoading}
+        updateKeep={updateKeep}
+      />
     </>
   );
 }

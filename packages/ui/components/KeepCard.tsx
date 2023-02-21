@@ -1,29 +1,6 @@
 import React from "react";
 import { Trash } from "../Icons/Trash";
-
-export interface Keeps {
-  keeps: Keep[];
-}
-
-export interface Keep {
-  id: number;
-  title: string;
-  note: string | null;
-  tags: Tag[] | [];
-  todos: Todo[] | [];
-}
-
-export interface Tag {
-  id: number;
-  tag: string;
-}
-
-export interface Todo {
-  id: string;
-  isCompleted: boolean;
-  todo: string;
-  keepId: number;
-}
+import { Keep } from "../types";
 
 export const KeepCard = ({
   keep,
@@ -78,7 +55,10 @@ export const KeepCard = ({
         ) : null}
         <div className="flex justify-end">
           <button
-            onClick={() => deleteKeep(keep?.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              deleteKeep(keep?.id);
+            }}
             disabled={isDeleting}
             className="grid h-7 w-7 place-items-center  hover:rounded-full hover:bg-slate-100 hover:dark:bg-neutral-700"
           >
