@@ -245,6 +245,9 @@ export const keepRouter = router({
               todos: true,
             },
           });
+          return {
+            message: "Keep Updated",
+          };
         }
         return {
           error: "Something went wrong. No Keep found",
