@@ -42,7 +42,9 @@ export const Modal = ({
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
   function closeModal() {
-    setIsOpen(false);
+    if (!isProcessing) {
+      setIsOpen(false);
+    }
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
@@ -84,15 +86,7 @@ export const Modal = ({
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog
-          as="div"
-          className="relative z-10"
-          onClose={() => {
-            if (!isProcessing) {
-              closeModal();
-            }
-          }}
-        >
+        <Dialog as="div" className="relative z-10" onClose={closeModal}>
           <div className="fixed inset-0 overflow-y-auto">
             <div className="flex min-h-full items-center justify-center p-4 text-center">
               <Transition.Child
