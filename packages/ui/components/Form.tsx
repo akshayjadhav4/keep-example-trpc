@@ -1,13 +1,14 @@
-import React, { KeyboardEvent, useEffect, useRef, useState } from "react";
+import React, { KeyboardEvent, useEffect, useReducer, useRef } from "react";
 import { uuid } from "uuidv4";
 import { CheckIcon } from "../Icons/CheckIcon";
 import { Close } from "../Icons/Close";
 import { Plus } from "../Icons/Plus";
 import { Refresh } from "../Icons/Refresh";
-import { Tag } from "../Icons/Tag";
+import { Tag as TagIcon } from "../Icons/Tag";
+import { Action, Tag, TodoInput } from "../types";
 
 type Props = {
-  allTags: Tags[];
+  allTags: Tag[];
   createKeep: (keep: Keep) => void;
   isProcessing: boolean;
   reset: boolean;
@@ -22,54 +23,113 @@ interface Keep {
   }[];
   tags?: { id: number }[];
 }
-interface Todo {
-  id: string;
-  todo: string;
-  isCompleted: boolean;
+
+interface State {
+  isFormExpanded: boolean;
+  title: string;
+  note: string;
+  showCheckboxes: boolean;
+  todos: TodoInput[];
+  showTags: boolean;
+  tags: Tag[];
+  selectedTags: Tag[];
+  todoValue: string;
 }
 
-interface Tags {
-  id: number;
-  tag: string;
-}
+const initialState: State = {
+  isFormExpanded: false,
+  title: "",
+  note: "",
+  showCheckboxes: false,
+  todos: [],
+  showTags: false,
+  tags: [],
+  selectedTags: [],
+  todoValue: "",
+};
 
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case "SET_IS_FORM_EXPANDED":
+      return { ...state, isFormExpanded: action.payload };
+    case "SET_TITLE":
+      return { ...state, title: action.payload };
+    case "SET_NOTE":
+      return { ...state, note: action.payload };
+    case "SET_SHOW_CHECKBOXES":
+      return { ...state, showCheckboxes: action.payload };
+    case "ADD_TODO":
+      return { ...state, todos: [...state.todos, action.payload] };
+    case "SET_TAGS":
+      return { ...state, tags: action.payload };
+    case "SET_TODO_VALUE":
+      return { ...state, todoValue: action.payload };
+    case "UPDATE_TODO":
+      const id = state.todos.findIndex((item) => item.id === action.payload.id);
+      return {
+        ...state,
+        todos: [
+          ...state.todos.slice(0, id),
+          action.payload,
+          ...state.todos.slice(id + 1),
+        ],
+      };
+    case "REMOVE_TODO":
+      const updatedTodos = state.todos.filter(
+        (currentTodo) => currentTodo.id !== action.payload
+      );
+      return { ...state, todos: updatedTodos };
+    case "ADD_SELECTED_TAG":
+      return {
+        ...state,
+        selectedTags: [...state.selectedTags, action.payload],
+      };
+    case "REMOVE_SELECTED_TAG":
+      const updatedTags = state.tags.filter(
+        (currentTag) => currentTag.id !== action.payload
+      );
+      return { ...state, selectedTags: updatedTags };
+    case "SET_SHOW_TAGS":
+      return { ...state, showTags: action.payload };
+    case "RESET":
+      return { ...initialState };
+    default:
+      return initialState;
+  }
+}
 export const Form = ({ allTags, createKeep, isProcessing, reset }: Props) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const formContainerRef = useRef<HTMLDivElement>(null);
 
-  const [isFormExpanded, setIsFormExpanded] = useState<boolean>(false);
-  const [title, setTitle] = useState<string>("");
-  const [note, setNote] = useState<string>("");
-  const [showCheckboxes, setShowCheckboxes] = useState<boolean>(false);
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [showTags, setShowTags] = useState<boolean>(false);
-  const [tags, setTags] = useState<Tags[]>(allTags);
-  const [selectedTags, setSelectedTags] = useState<Tags[]>([]);
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const {
+    isFormExpanded,
+    title,
+    note,
+    showCheckboxes,
+    todos,
+    showTags,
+    tags,
+    selectedTags,
+    todoValue,
+  } = state;
 
-  const [todoValue, setTodoValue] = useState<string>("");
   function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     if (event?.key === "Enter") {
-      setTodos([
-        ...todos,
-        {
+      dispatch({
+        type: "ADD_TODO",
+        payload: {
           id: `${uuid()}`,
           isCompleted: false,
           todo: todoValue,
         },
-      ]);
-      setTodoValue("");
+      });
+      dispatch({ type: "SET_TODO_VALUE", payload: "" });
     }
   }
 
   function resetForm() {
-    setIsFormExpanded(false);
-    setShowCheckboxes(false);
-    setTitle("");
-    setNote("");
-    setTodoValue("");
-    setTodos([]);
-    setShowTags(false);
-    setSelectedTags([]);
+    dispatch({ type: "RESET" });
   }
 
   useEffect(() => {
@@ -105,6 +165,10 @@ export const Form = ({ allTags, createKeep, isProcessing, reset }: Props) => {
     resetForm();
   }, [reset]);
 
+  useEffect(() => {
+    dispatch({ type: "SET_TAGS", payload: allTags });
+  }, [allTags, isFormExpanded]);
+
   return (
     <div
       ref={formContainerRef}
@@ -116,9 +180,13 @@ export const Form = ({ allTags, createKeep, isProcessing, reset }: Props) => {
           type="text"
           placeholder="Title"
           className="w-full text-base font-semibold outline-none dark:bg-neutral-800 dark:text-white"
-          onFocus={() => setIsFormExpanded(true)}
+          onFocus={() =>
+            dispatch({ type: "SET_IS_FORM_EXPANDED", payload: true })
+          }
           value={title}
-          onChange={(event) => setTitle(event.target.value)}
+          onChange={(event) =>
+            dispatch({ type: "SET_TITLE", payload: event.target.value })
+          }
         />
       </div>
       {/* title input end */}
@@ -133,7 +201,7 @@ export const Form = ({ allTags, createKeep, isProcessing, reset }: Props) => {
               rows={1}
               value={note}
               onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setNote(event?.target?.value)
+                dispatch({ type: "SET_NOTE", payload: event?.target?.value })
               }
               className="h-auto w-full  text-sm outline-none dark:bg-neutral-800 dark:text-white"
             />
@@ -156,16 +224,14 @@ export const Form = ({ allTags, createKeep, isProcessing, reset }: Props) => {
                           type="checkbox"
                           checked={todo?.isCompleted}
                           onChange={() => {
-                            const updatedTodo: Todo = {
+                            const updatedTodo: TodoInput = {
                               ...todos[id],
                               isCompleted: !todo?.isCompleted,
                             };
-
-                            setTodos([
-                              ...todos.slice(0, id),
-                              updatedTodo,
-                              ...todos.slice(id + 1),
-                            ]);
+                            dispatch({
+                              type: "UPDATE_TODO",
+                              payload: updatedTodo,
+                            });
                           }}
                         />
                       </div>
@@ -178,16 +244,14 @@ export const Form = ({ allTags, createKeep, isProcessing, reset }: Props) => {
                           event: React.KeyboardEvent<HTMLInputElement>
                         ) => {
                           if (event.key === "Enter") {
-                            const updatedTodo: Todo = {
+                            const updatedTodo: TodoInput = {
                               ...todos[id],
                               todo: (event.target as HTMLInputElement).value,
                             };
-
-                            setTodos([
-                              ...todos.slice(0, id),
-                              updatedTodo,
-                              ...todos.slice(id + 1),
-                            ]);
+                            dispatch({
+                              type: "UPDATE_TODO",
+                              payload: updatedTodo,
+                            });
                           }
                         }}
                       />
@@ -195,10 +259,7 @@ export const Form = ({ allTags, createKeep, isProcessing, reset }: Props) => {
                         <button
                           className="mx-2 grid h-8 w-8 place-items-center  hover:rounded-full hover:bg-slate-100 hover:dark:bg-neutral-700"
                           onClick={() => {
-                            const updatedTodos = todos.filter(
-                              (currentTodo) => currentTodo.id !== todo.id
-                            );
-                            setTodos(updatedTodos);
+                            dispatch({ type: "REMOVE_TODO", payload: todo.id });
                           }}
                         >
                           <Close />
@@ -226,7 +287,12 @@ export const Form = ({ allTags, createKeep, isProcessing, reset }: Props) => {
                     placeholder="List Item"
                     value={todoValue}
                     onKeyDown={(event) => onKeyDown(event)}
-                    onChange={(event) => setTodoValue(event.target.value)}
+                    onChange={(event) =>
+                      dispatch({
+                        type: "SET_TODO_VALUE",
+                        payload: event.target.value,
+                      })
+                    }
                   />
                 </div>
               </div>
@@ -275,14 +341,13 @@ export const Form = ({ allTags, createKeep, isProcessing, reset }: Props) => {
                       className="mr-2"
                       onChange={() => {
                         if (isTagSelected === -1) {
-                          setSelectedTags([...selectedTags, tag]);
+                          dispatch({ type: "ADD_SELECTED_TAG", payload: tag });
                           return;
                         }
-                        const updatedSelectedTags = selectedTags.filter(
-                          (selectedTag) => selectedTag.id !== tag.id
-                        );
-
-                        setSelectedTags(updatedSelectedTags);
+                        dispatch({
+                          type: "REMOVE_SELECTED_TAG",
+                          payload: tag.id,
+                        });
                       }}
                     />
                     <p className="text-xs dark:text-white">{tag.tag}</p>
@@ -296,14 +361,25 @@ export const Form = ({ allTags, createKeep, isProcessing, reset }: Props) => {
           {/* action buttons footer start */}
           <div className="my-1 flex items-center justify-between">
             <div className="flex items-center">
-              <button onClick={() => setShowCheckboxes(!showCheckboxes)}>
+              <button
+                onClick={() =>
+                  dispatch({
+                    type: "SET_SHOW_CHECKBOXES",
+                    payload: !showCheckboxes,
+                  })
+                }
+              >
                 <div className="mx-2 grid h-8 w-8 place-items-center  hover:rounded-full hover:bg-slate-100 hover:dark:bg-neutral-700">
                   <CheckIcon showCheckboxes={showCheckboxes} />
                 </div>
               </button>
-              <button onClick={() => setShowTags(!showTags)}>
+              <button
+                onClick={() =>
+                  dispatch({ type: "SET_SHOW_TAGS", payload: !showTags })
+                }
+              >
                 <div className="mx-2 grid h-8 w-8 place-items-center  hover:rounded-full hover:bg-slate-100 hover:dark:bg-neutral-700">
-                  <Tag showTags={showTags} />
+                  <TagIcon showTags={showTags} />
                 </div>
               </button>
             </div>
