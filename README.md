@@ -28,10 +28,30 @@ Implementing trpc in turborepo with Nextjs and express application using postgre
 
 `packages/ui`: UI lib containing components. 
 
+## Installation
+
+```
+cd keep-example-trpc
+npm install
+```
+
 ### Database Setup
 
 Add postgresql **DATABASE_URL** connection string inside `packages/database/.env`
 
+Next
+```
+cd packages/database
+
+npx prisma db push
+```
+
+### Run dev server
+
+```
+cd keep-example-trpc
+npm run dev
+```
 
 ## Screenshots
 
